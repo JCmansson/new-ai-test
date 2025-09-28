@@ -1,0 +1,317 @@
+{
+  "_comment": "Keys prefixed with _ are documentation/metadata for humans, not used by the application",
+  "_usage-notes": {
+    "metadata-prefix": "Leading underscores (_) are common for metadata/internal keys in TXO and Python conventions",
+    "pattern-flexibility": "Patterns use [-_]? to match either dash, underscore, or no separator",
+    "json-fields": "JSON patterns use \"_? to optionally match metadata fields like _token, _password",
+    "case-sensitivity": "Simple patterns include common case variations",
+    "order-matters": "Keep broad patterns (like long-token) at the end to avoid over-redaction",
+    "performance": "Simple patterns are faster for exact string matching, regex patterns for complex matching",
+    "txo-specific": "Includes patterns for TXO metadata fields like _token, _org_id (though org_id itself isn't sensitive)"
+  },
+  "redaction-patterns": {
+    "description": "TXO-specific redaction patterns with flexible dash/underscore matching",
+    "patterns": [
+      {
+        "name": "bearer-token",
+        "pattern": "Bearer\\s+[A-Za-z0-9\\-._~+/]+=*",
+        "replacement": "Bearer [REDACTED]",
+        "description": "Bearer authentication tokens"
+      },
+      {
+        "name": "jwt-token",
+        "pattern": "ey[A-Za-z0-9\\-_]+\\.ey[A-Za-z0-9\\-_]+\\.[A-Za-z0-9\\-_]+",
+        "replacement": "[REDACTED_JWT]",
+        "description": "JSON Web Tokens"
+      },
+      {
+        "name": "password-json",
+        "pattern": "\"password\":\\s*\"[^\"]*\"",
+        "replacement": "\"password\": \"[REDACTED]\"",
+        "description": "Passwords in JSON"
+      },
+      {
+        "name": "client-secret-json",
+        "pattern": "\"client[-_]secret\":\\s*\"[^\"]*\"",
+        "replacement": "\"client_secret\": \"[REDACTED]\"",
+        "description": "Client secrets in JSON (matches client-secret or client_secret)"
+      },
+      {
+        "name": "api-token-json",
+        "pattern": "\"api[-_]?token\":\\s*\"[^\"]*\"",
+        "replacement": "\"api_token\": \"[REDACTED]\"",
+        "description": "API tokens in JSON (matches api-token, api_token, apitoken)"
+      },
+      {
+        "name": "access-token-json",
+        "pattern": "\"access[-_]?token\":\\s*\"[^\"]*\"",
+        "replacement": "\"access_token\": \"[REDACTED]\"",
+        "description": "Access tokens in JSON"
+      },
+      {
+        "name": "auth-token-json",
+        "pattern": "\"auth[-_]?token\":\\s*\"[^\"]*\"",
+        "replacement": "\"auth_token\": \"[REDACTED]\"",
+        "description": "Auth tokens in JSON"
+      },
+      {
+        "name": "app-secret-json",
+        "pattern": "\"app[-_]secret\":\\s*\"[^\"]*\"",
+        "replacement": "\"app_secret\": \"[REDACTED]\"",
+        "description": "App secrets in JSON"
+      },
+      {
+        "name": "azure-storage-accountkey",
+        "pattern": "(Account[-_]?[Kk]ey=)[^;\\s]+",
+        "replacement": "\\1[REDACTED]",
+        "description": "Azure Storage account key (flexible separator)"
+      },
+      {
+        "name": "azure-storage-full",
+        "pattern": "DefaultEndpointsProtocol=https;AccountName=[^;]+;Account[-_]?[Kk]ey=[^;\\s]+",
+        "replacement": "DefaultEndpointsProtocol=https;AccountName=[REDACTED];AccountKey=[REDACTED]",
+        "description": "Full Azure Storage connection string"
+      },
+      {
+        "name": "connection-string-password",
+        "pattern": "(Password=)[^;\\s]+",
+        "replacement": "\\1[REDACTED]",
+        "description": "Password in connection strings"
+      },
+      {
+        "name": "url-api-key",
+        "pattern": "(api[-_]?key=)[^&\\s]+",
+        "replacement": "\\1[REDACTED]",
+        "description": "API key in URL (matches api-key, api_key, apikey)"
+      },
+      {
+        "name": "url-access-key",
+        "pattern": "(access[-_]?key=)[^&\\s]+",
+        "replacement": "\\1[REDACTED]",
+        "description": "Access key in URL parameters"
+      },
+      {
+        "name": "url-auth-token",
+        "pattern": "(auth[-_]?token=)[^&\\s]+",
+        "replacement": "\\1[REDACTED]",
+        "description": "Auth token in URL parameters"
+      },
+      {
+        "name": "url-access-token",
+        "pattern": "(access[-_]?token=)[^&\\s]+",
+        "replacement": "\\1[REDACTED]",
+        "description": "Access token in URL parameters"
+      },
+      {
+        "name": "url-client-secret",
+        "pattern": "(client[-_]secret=)[^&\\s]+",
+        "replacement": "\\1[REDACTED]",
+        "description": "Client secret in URL parameters"
+      },
+      {
+        "name": "url-app-secret",
+        "pattern": "(app[-_]secret=)[^&\\s]+",
+        "replacement": "\\1[REDACTED]",
+        "description": "App secret in URL parameters"
+      },
+      {
+        "name": "shared-access-key",
+        "pattern": "(shared[-_]?access[-_]?key=)[^;\\s]+",
+        "replacement": "\\1[REDACTED]",
+        "description": "Shared access key (flexible separators)"
+      },
+      {
+        "name": "primary-key",
+        "pattern": "(primary[-_]?key=)[^;\\s]+",
+        "replacement": "\\1[REDACTED]",
+        "description": "Primary key (flexible separator)"
+      },
+      {
+        "name": "secondary-key",
+        "pattern": "(secondary[-_]?key=)[^;\\s]+",
+        "replacement": "\\1[REDACTED]",
+        "description": "Secondary key (flexible separator)"
+      },
+      {
+        "name": "secret-param",
+        "pattern": "(secret=)[^\\s&;]+",
+        "replacement": "\\1[REDACTED]",
+        "description": "Secret parameter"
+      },
+      {
+        "name": "credit-card",
+        "pattern": "\\b\\d{4}[\\s\\-]?\\d{4}[\\s\\-]?\\d{4}[\\s\\-]?\\d{4}\\b",
+        "replacement": "[REDACTED_CARD]",
+        "description": "Credit card numbers"
+      },
+      {
+        "name": "ssn-us",
+        "pattern": "\\b\\d{3}-\\d{2}-\\d{4}\\b",
+        "replacement": "[REDACTED_SSN]",
+        "description": "US Social Security Numbers"
+      },
+      {
+        "name": "long-token",
+        "pattern": "\\b[A-Za-z0-9]{40,}\\b",
+        "replacement": "[REDACTED_TOKEN]",
+        "description": "Long random strings - keep this LAST as it's very broad"
+      }
+    ],
+    "simple-patterns": [
+      {
+        "name": "api-key-variations",
+        "contains": [
+          "api_key=",
+          "api-key=",
+          "apikey=",
+          "api_Key=",
+          "api-Key=",
+          "apiKey="
+        ],
+        "replacement": "[REDACTED]",
+        "description": "API key parameter variations (all separators and cases)"
+      },
+      {
+        "name": "access-key-variations",
+        "contains": [
+          "access_key=",
+          "access-key=",
+          "accesskey=",
+          "access_Key=",
+          "access-Key=",
+          "accessKey="
+        ],
+        "replacement": "[REDACTED]",
+        "description": "Access key variations"
+      },
+      {
+        "name": "account-key-variations",
+        "contains": [
+          "account_key=",
+          "account-key=",
+          "accountkey=",
+          "AccountKey=",
+          "Account_Key=",
+          "Account-Key="
+        ],
+        "replacement": "[REDACTED]",
+        "description": "Account key variations"
+      },
+      {
+        "name": "client-secret-variations",
+        "contains": [
+          "client_secret=",
+          "client-secret=",
+          "clientsecret=",
+          "client_Secret=",
+          "client-Secret="
+        ],
+        "replacement": "[REDACTED]",
+        "description": "Client secret variations"
+      },
+      {
+        "name": "app-secret-variations",
+        "contains": [
+          "app_secret=",
+          "app-secret=",
+          "appsecret=",
+          "app_Secret=",
+          "app-Secret="
+        ],
+        "replacement": "[REDACTED]",
+        "description": "App secret variations"
+      },
+      {
+        "name": "auth-token-variations",
+        "contains": [
+          "auth_token=",
+          "auth-token=",
+          "authtoken=",
+          "auth_Token=",
+          "auth-Token="
+        ],
+        "replacement": "[REDACTED]",
+        "description": "Auth token variations"
+      },
+      {
+        "name": "access-token-variations",
+        "contains": [
+          "access_token=",
+          "access-token=",
+          "accesstoken=",
+          "access_Token=",
+          "access-Token="
+        ],
+        "replacement": "[REDACTED]",
+        "description": "Access token variations"
+      },
+      {
+        "name": "shared-access-key-variations",
+        "contains": [
+          "shared_access_key=",
+          "shared-access-key=",
+          "sharedaccesskey=",
+          "SharedAccessKey="
+        ],
+        "replacement": "[REDACTED]",
+        "description": "Shared access key variations"
+      },
+      {
+        "name": "primary-key-variations",
+        "contains": [
+          "primary_key=",
+          "primary-key=",
+          "primarykey=",
+          "PrimaryKey=",
+          "Primary_Key="
+        ],
+        "replacement": "[REDACTED]",
+        "description": "Primary key variations"
+      },
+      {
+        "name": "secondary-key-variations",
+        "contains": [
+          "secondary_key=",
+          "secondary-key=",
+          "secondarykey=",
+          "SecondaryKey=",
+          "Secondary_Key="
+        ],
+        "replacement": "[REDACTED]",
+        "description": "Secondary key variations"
+      },
+      {
+        "name": "password-variations",
+        "contains": [
+          "password=",
+          "Password=",
+          "pwd=",
+          "passwd=",
+          "pass="
+        ],
+        "replacement": "[REDACTED]",
+        "description": "Password parameter variations"
+      },
+      {
+        "name": "token-variations",
+        "contains": [
+          "token=",
+          "Token=",
+          "bearer_token=",
+          "bearer-token="
+        ],
+        "replacement": "[REDACTED]",
+        "description": "Generic token variations"
+      },
+      {
+        "name": "secret-variations",
+        "contains": [
+          "secret=",
+          "Secret="
+        ],
+        "replacement": "[REDACTED]",
+        "description": "Generic secret variations"
+      }
+    ]
+  }
+}
