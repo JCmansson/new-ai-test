@@ -1,0 +1,127 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "TXO Org Env Config Schema",
+  "type": "object",
+  "properties": {
+    "global": {
+      "type": "object",
+      "properties": {
+        "api-base-url": { "type": "string", "format": "uri" },
+        "api-version": { "type": "string", "pattern": "^v[0-9]+(\\.[0-9]+)?$" },
+        "tenant-id": { "type": "string", "pattern": "^[0-9a-fA-F-]{36}$" },
+        "client-id": { "type": "string" },
+        "oauth-scope": { "type": "string" }
+      },
+      "required": ["api-base-url", "api-version", "tenant-id", "client-id", "oauth-scope"],
+      "additionalProperties": false
+    },
+    "script-behavior": {
+      "type": "object",
+      "properties": {
+        "api-delay-seconds": { "type": "integer", "minimum": 0 },
+        "api-timeouts": {
+          "type": "object",
+          "properties": {
+            "rest-timeout-seconds": { "type": "integer", "minimum": 1 },
+            "soap-timeout-seconds": { "type": "integer", "minimum": 1 },
+            "wsdl-timeout-seconds": { "type": "integer", "minimum": 1 },
+            "async-max-wait": { "type": "integer", "minimum": 1 },
+            "async-poll-interval": { "type": "integer", "minimum": 1 }
+          },
+          "required": [
+            "rest-timeout-seconds",
+            "soap-timeout-seconds",
+            "wsdl-timeout-seconds",
+            "async-max-wait",
+            "async-poll-interval"
+          ],
+          "additionalProperties": false
+        },
+        "retry-strategy": {
+          "type": "object",
+          "properties": {
+            "max-retries": { "type": "integer", "minimum": 0 },
+            "backoff-factor": { "type": "number", "minimum": 0 }
+          },
+          "required": ["max-retries", "backoff-factor"],
+          "additionalProperties": false
+        },
+        "jitter": {
+          "type": "object",
+          "properties": {
+            "min-factor": { "type": "number", "minimum": 0 },
+            "max-factor": { "type": "number", "minimum": 0 }
+          },
+          "required": ["min-factor", "max-factor"],
+          "additionalProperties": false
+        },
+        "rate-limiting": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "calls-per-second": { "type": "integer", "minimum": 1 },
+            "burst-size": { "type": "integer", "minimum": 1 }
+          },
+          "required": ["enabled", "calls-per-second", "burst-size"],
+          "additionalProperties": false
+        },
+        "circuit-breaker": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "failure-threshold": { "type": "integer", "minimum": 1 },
+            "timeout-seconds": { "type": "integer", "minimum": 1 }
+          },
+          "required": ["enabled", "failure-threshold", "timeout-seconds"],
+          "additionalProperties": false
+        },
+        "batch-handling": {
+          "type": "object",
+          "properties": {
+            "read-batch-size": { "type": "integer", "minimum": 1 },
+            "update-batch-size": { "type": "integer", "minimum": 1 },
+            "vat-batch-size": { "type": "integer", "minimum": 1 }
+          },
+          "required": ["read-batch-size", "update-batch-size", "vat-batch-size"],
+          "additionalProperties": false
+        },
+        "enable-progress-bars": { "type": "boolean" },
+        "debug-mode": { "type": "boolean" },
+        "verbose-logging": { "type": "boolean" }
+      },
+      "required": [
+        "api-delay-seconds",
+        "api-timeouts",
+        "retry-strategy",
+        "jitter",
+        "rate-limiting",
+        "circuit-breaker",
+        "batch-handling",
+        "enable-progress-bars",
+        "debug-mode",
+        "verbose-logging"
+      ],
+      "additionalProperties": false
+    },
+    "business-central": {
+      "type": "object",
+      "properties": {
+        "environment-name": { "type": "string" },
+        "companies": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1
+        },
+        "apis": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1
+        }
+      },
+      "required": ["environment-name", "companies", "apis"],
+      "additionalProperties": false
+    }
+  },
+  "required": ["global", "script-behavior", "business-central"],
+  "additionalProperties": false
+}

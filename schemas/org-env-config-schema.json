@@ -1,206 +1,251 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "TXO Organization Environment Configuration",
-  "description": "Configuration schema for TXO Python Template v2.1",
+  "title": "TXO Org/Env Config Schema (v3.1)",
   "type": "object",
-  "additionalProperties": false,
   "required": [
     "global",
-    "script-behavior"
+    "script-behavior",
+    "business-central"
   ],
   "properties": {
     "global": {
-      "description": "Global settings shared across scripts",
       "type": "object",
-      "additionalProperties": true,
-      "required": [],
+      "required": [
+        "api-base-url",
+        "api-version",
+        "tenant-id",
+        "client-id",
+        "oauth-scope"
+      ],
       "properties": {
         "api-base-url": {
           "type": "string",
-          "format": "uri",
-          "description": "Base URL for API endpoints"
+          "format": "uri"
         },
         "api-version": {
           "type": "string",
-          "description": "API version to use"
+          "enum": [
+            "v2.0",
+            "v2",
+            "v1.0"
+          ]
         },
         "tenant-id": {
           "type": "string",
-          "description": "Azure AD tenant ID (empty for non-API scripts)"
+          "minLength": 1
         },
         "client-id": {
           "type": "string",
-          "description": "Azure AD application client ID (empty for non-API scripts)"
+          "minLength": 1
         },
         "oauth-scope": {
           "type": "string",
-          "description": "OAuth scope for authentication (empty for non-API scripts)"
+          "minLength": 1
         }
-      }
+      },
+      "additionalProperties": true
+    },
+    "business-central": {
+      "type": "object",
+      "required": [
+        "environment-name",
+        "companies",
+        "apis"
+      ],
+      "properties": {
+        "environment-name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "companies": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "apis": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        }
+      },
+      "additionalProperties": false
     },
     "script-behavior": {
-      "description": "Script execution behavior settings",
       "type": "object",
-      "additionalProperties": true,
+      "required": [
+        "excel-output-filename",
+        "api-delay-seconds",
+        "api-timeouts",
+        "retry-strategy",
+        "jitter",
+        "rate-limiting",
+        "circuit-breaker",
+        "batch-handling",
+        "enable-progress-bars",
+        "debug-mode",
+        "verbose-logging"
+      ],
       "properties": {
+        "excel-output-filename": {
+          "type": "string",
+          "pattern": "^.+\\.xlsx$"
+        },
         "api-delay-seconds": {
           "type": "number",
-          "minimum": 0,
-          "description": "Delay between API calls in seconds"
+          "minimum": 0
         },
         "api-timeouts": {
           "type": "object",
-          "additionalProperties": false,
+          "required": [
+            "rest-timeout-seconds",
+            "soap-timeout-seconds",
+            "wsdl-timeout-seconds",
+            "async-max-wait",
+            "async-poll-interval"
+          ],
           "properties": {
             "rest-timeout-seconds": {
               "type": "integer",
-              "minimum": 1,
-              "default": 60
+              "minimum": 1
             },
             "soap-timeout-seconds": {
               "type": "integer",
-              "minimum": 1,
-              "default": 120
+              "minimum": 1
             },
             "wsdl-timeout-seconds": {
               "type": "integer",
-              "minimum": 1,
-              "default": 60
+              "minimum": 1
             },
             "async-max-wait": {
               "type": "integer",
-              "minimum": 1,
-              "default": 300,
-              "description": "Maximum wait time for async operations"
+              "minimum": 0
             },
             "async-poll-interval": {
               "type": "integer",
-              "minimum": 1,
-              "default": 5,
-              "description": "Polling interval for async operations"
+              "minimum": 1
             }
-          }
+          },
+          "additionalProperties": false
         },
         "retry-strategy": {
           "type": "object",
-          "additionalProperties": false,
+          "required": [
+            "max-retries",
+            "backoff-factor"
+          ],
           "properties": {
             "max-retries": {
               "type": "integer",
-              "minimum": 0,
-              "maximum": 10,
-              "default": 5
+              "minimum": 0
             },
             "backoff-factor": {
               "type": "number",
-              "minimum": 1.0,
-              "maximum": 10.0,
-              "default": 3.0
+              "minimum": 0
             }
-          }
+          },
+          "additionalProperties": false
         },
         "jitter": {
           "type": "object",
-          "additionalProperties": false,
+          "required": [
+            "min-factor",
+            "max-factor"
+          ],
           "properties": {
             "min-factor": {
-              "type": "number",
-              "minimum": 0.1,
-              "maximum": 1.0,
-              "default": 0.8
+              "type": "number"
             },
             "max-factor": {
-              "type": "number",
-              "minimum": 1.0,
-              "maximum": 2.0,
-              "default": 1.2
+              "type": "number"
             }
-          }
+          },
+          "additionalProperties": false
         },
         "rate-limiting": {
           "type": "object",
-          "additionalProperties": false,
+          "required": [
+            "enabled",
+            "calls-per-second",
+            "burst-size"
+          ],
           "properties": {
             "enabled": {
-              "type": "boolean",
-              "default": false
+              "type": "boolean"
             },
             "calls-per-second": {
               "type": "number",
-              "minimum": 0.1,
-              "maximum": 1000,
-              "default": 10
+              "minimum": 0
             },
             "burst-size": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 100,
-              "default": 1
+              "type": "number",
+              "minimum": 0
             }
-          }
+          },
+          "additionalProperties": false
         },
         "circuit-breaker": {
           "type": "object",
-          "additionalProperties": false,
+          "required": [
+            "enabled",
+            "failure-threshold",
+            "timeout-seconds"
+          ],
           "properties": {
             "enabled": {
-              "type": "boolean",
-              "default": false
+              "type": "boolean"
             },
             "failure-threshold": {
               "type": "integer",
-              "minimum": 1,
-              "maximum": 100,
-              "default": 5
+              "minimum": 1
             },
             "timeout-seconds": {
               "type": "integer",
-              "minimum": 1,
-              "maximum": 600,
-              "default": 60
+              "minimum": 1
             }
-          }
+          },
+          "additionalProperties": false
         },
         "batch-handling": {
           "type": "object",
-          "additionalProperties": false,
+          "required": [
+            "read-batch-size",
+            "update-batch-size",
+            "vat-batch-size"
+          ],
           "properties": {
             "read-batch-size": {
               "type": "integer",
-              "minimum": 1,
-              "maximum": 1000,
-              "default": 20
+              "minimum": 1
             },
             "update-batch-size": {
               "type": "integer",
-              "minimum": 1,
-              "maximum": 100,
-              "default": 10
+              "minimum": 1
             },
             "vat-batch-size": {
               "type": "integer",
-              "minimum": 1,
-              "maximum": 100,
-              "default": 10
+              "minimum": 1
             }
-          }
+          },
+          "additionalProperties": false
         },
         "enable-progress-bars": {
-          "type": "boolean",
-          "default": false,
-          "description": "Show progress bars for long operations"
+          "type": "boolean"
         },
         "debug-mode": {
-          "type": "boolean",
-          "default": false,
-          "description": "Enable debug output"
+          "type": "boolean"
         },
         "verbose-logging": {
-          "type": "boolean",
-          "default": false,
-          "description": "Enable verbose logging"
+          "type": "boolean"
         }
-      }
+      },
+      "additionalProperties": true
     }
-  }
+  },
+  "additionalProperties": false
 }

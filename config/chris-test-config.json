@@ -1,0 +1,58 @@
+{
+  "global": {
+    "api-base-url": "https://api.businesscentral.dynamics.com",
+    "api-version": "v2.0",
+    "tenant-id": "c1061658-0240-4cbc-8da5-165a9caa30a3",
+    "client-id": "36a30f16-704f-4d30-8248-0d09464f399d",
+    "oauth-scope": "https://api.businesscentral.dynamics.com/.default"
+  },
+  "business-central": {
+    "environment-name": "TestSE",
+    "companies": [
+      "AFHS",
+      "TXO",
+      "CRONUS SE"
+    ],
+    "apis": [
+      "IntercompanyPartner",
+      "IntercompanySetup"
+    ]
+  },
+  "script-behavior": {
+    "excel-output-filename": "chris-test-bc-data.xlsx",
+    "api-delay-seconds": 0,
+    "api-timeouts": {
+      "rest-timeout-seconds": 60,
+      "soap-timeout-seconds": 120,
+      "wsdl-timeout-seconds": 60,
+      "async-max-wait": 300,
+      "async-poll-interval": 5
+    },
+    "retry-strategy": {
+      "max-retries": 5,
+      "backoff-factor": 3.0
+    },
+    "jitter": {
+      "min-factor": 0.8,
+      "max-factor": 1.2
+    },
+    "rate-limiting": {
+      "enabled": false,
+      "calls-per-second": 10,
+      "burst-size": 1
+    },
+    "circuit-breaker": {
+      "enabled": false,
+      "failure-threshold": 5,
+      "timeout-seconds": 60
+    },
+    "batch-handling": {
+      "read-batch-size": 20,
+      "update-batch-size": 10,
+      "vat-batch-size": 10
+    },
+    "enable-progress-bars": false,
+    "debug-mode": false,
+    "verbose-logging": false
+  }
+}
